@@ -3,10 +3,13 @@ import Header from "./Header.vue";
 import Layout from "./Layout.vue";
 import Resume from "./Resume/Index.vue"
 import Movements from "./Movements/Index.vue"
+import Action from "./Action.vue"
+import Graphic from "./Resume/Graphic.vue"
 import { ref } from "@vue/reactivity";
 
 const monto = ref(null)
 const label = ref(null)
+const mounts = ref([100, 200, 500, 200, -400, -500, -300, 0, 300, 500])
 const movements = ref([{
           id: 0,
           title: "Movimiento",
@@ -51,14 +54,16 @@ const movements = ref([{
         :labeltotal="label"
         label="Ahorro total" 
         :monto= "monto" 
-        montototal= 10000002 >
+        montototal= 10000002>
 
         <template #graphic>
-          graphiccc
+          <Graphic
+          :amounts="amounts"
+          />
         </template>
 
         <template #action>
-          actionnn
+          <Action/>
         </template>
       </Resume>
     </template>
