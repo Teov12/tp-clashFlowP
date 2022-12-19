@@ -25,6 +25,7 @@ const labelVisual = computed(()=>{
 const montoCurrency = computed(()=>{
     return currencyFormatter.format(montoVisual.value);
 })
+const isNegative = computed(()=>montoVisual.value < 0)
 
 const currencyFormatter = new Intl.NumberFormat("es-AR", {
  style: "currency",
@@ -37,7 +38,7 @@ const currencyFormatter = new Intl.NumberFormat("es-AR", {
 <template>
     <main>
         <p>{{ labelVisual }}</p>
-        <h1>{{ montoCurrency }}</h1>
+        <h1 :class="{'red': isNegative, 'green': !isNegative}">{{ montoCurrency }}</h1>
         <div class="graphic">
             <slot name="graphic"></slot>
         </div>
@@ -71,6 +72,12 @@ h1 {
   width: 100%;
   padding: 48px 24px;
   box-sizing: border-box;
+}
+.red {
+    color: red;
+}
+.green {
+    color: green;
 }
 </style>
 

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineProps, toRefs } from 'vue';
+import { computed, defineProps, toRefs, defineEmits } from 'vue';
 import Movement from "./Movement.vue";
 
 
@@ -13,10 +13,11 @@ const props = defineProps({
 
 const {movements} = toRefs(props)
 
-const remove = (id) => {
-  console.log("remove", id);
-}
+const emit = defineEmits(["remove"])
 
+const remove = (id) => {
+  emit("remove", id)
+}
 </script>
 
 

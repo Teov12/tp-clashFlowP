@@ -1,19 +1,35 @@
 <script setup>
 import Modal from "./Modal.vue"
-import {ref} from "vue"
+import {ref, defineEmits} from "vue"
 const showModal = ref(false)
 const title = ref("");
-const monto = ref(0);
-const descipcion= ref("");
+const amount = ref(0);
+const description= ref("");
 const movementType = ref("Ingreso")
 
 const close = function(){
     showModal.value = false
 }
 
+const emit = defineEmits(["create"]);
+
 const submit = () => {
-    showModal.value = !showModal.value
-}
+  showModal.value = !showModal.value;
+    emit("create", {
+      title: title.value,
+      amount: movementType.value === "Ingreso" ? amount.value : -amount.value,
+      description: description.value,
+      time: new Date(),
+    });
+    title.value="";
+    description.value="";
+    amount.value = 0;
+    movementType.value = "Ingreso";
+};
+
+
+
+
 
 </script>
 
@@ -30,12 +46,12 @@ const submit = () => {
 
                 <div class="field">
                     <label for="Monto">Monto</label>
-                    <input type="text" v-model="monto">
+                    <input type="number" v-model="amount">
                 </div>
 
                 <div class="field">
                     <label for="Descripcion">Descripcion</label>
-                    <textarea cols="4" v-model="descipcion"></textarea>
+                    <textarea cols="4" v-model="description"></textarea>
                 </div>
 
                 <div class="field">

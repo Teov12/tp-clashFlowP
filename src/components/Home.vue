@@ -6,82 +6,55 @@ import Movements from "./Movements/Index.vue"
 import Action from "./Action.vue"
 import Graphic from "./Resume/Graphic.vue"
 import { ref } from "@vue/reactivity";
-import { computed } from "@vue/runtime-core";
+import { computed, onMounted } from "@vue/runtime-core";
 
-const monto = ref(null)
-const label = ref(null)
-const movements = ref([
-        {
-          id: 0,
-          title: "Movimiento 1",
-          description: "Deposito de salario",
-          amount: 100,
-          time: new Date("12-11-2022"),
-        },
-        {
-          id: 1,
-          title: "Movimiento 2",
-          description: "Deposito de honorarios",
-          amount: 200,
-          time: new Date("12-12-2022"),
-        },
-        {
-          id: 2,
-          title: "Movimiento 3",
-          description: "Comida",
-          amount: 500,
-          time: new Date("12-13-2022"),
-        },
-        {
-          id: 3,
-          title: "Movimiento 4",
-          description: "Colegiatura",
-          amount: 200,
-          time: new Date("12-14-2022"),
-        },
-        {
-          id: 4,
-          title: "Movimiento 5",
-          description: "Reparación equipo",
-          amount: -400,
-          time: new Date("12-14-2022"),
-        },
-        {
-          id: 5,
-          title: "Movimiento 6",
-          description: "Reparación equipo",
-          amount: -600,
-          time: new Date("12-15-2022"),
-        },
-        {
-          id: 6,
-          title: "Movimiento 7",
-          description: "Reparación equipo",
-          amount: -300,
-          time: new Date("12-11-2022"),
-        },
-        {
-          id: 7,
-          title: "Movimiento 8",
-          description: "Reparación equipo",
-          amount: 0,
-          time: new Date("9-12-2022"),
-        },
-        {
-          id: 8,
-          title: "Movimiento 9",
-          description: "Reparación equipo",
-          amount: 300,
-          time: new Date("12-2-2022"),
-        },
-        {
-          id: 9,
-          title: "Movimiento 10",
-          description: "Reparación equipo",
-          amount: 500,
-          time: new Date("12-12-2022"),
-        },     
-]);
+const monto = ref(null);
+const label = ref(null);
+const movements = ref([]);
+
+onMounted(()=>{
+  const movementss = JSON.parse(localStorage.getItem("movements"));
+  console.log(movementss);
+
+  if (Array.isArray(movementss)) {
+    movements.value = movementss?.map(m =>{
+    return {...m, time: new Date(m.time)};
+  });
+  }
+})
+
+//agregar movimiento
+const create = (movement) =>{
+  const nextId = Math.max(...movements.value.map((movement) => movement.id)) + 1;
+  movements.value.push({
+    id:nextId,
+    ...movement,
+  })
+  save();
+}
+
+//eliminar movimiento
+const remove = (id) => {
+movements.value = movements.value.filter(m => m.id != id);
+save()
+}
+
+//guardar movimientos en la memoria
+const save = () =>{
+  localStorage.setItem("movements", JSON.stringify(movements.value))
+}
+
+const select = (el) =>{
+  console.log(el);
+  monto.value = el;
+};
+
+const totalAmount = computed(()=>{
+  return movements.value.reduce((suma, m)=>{
+    return suma + m.amount
+  }, 0);
+})
+
 
 const amounts = computed(()=>{
   const lastDays = movements.value
@@ -93,7 +66,7 @@ const amounts = computed(()=>{
         .map(m => m.amount);
       
       return lastDays.map((m, i) => {
-        const lastMovements = lastDays.slice(0, i);
+        const lastMovements = lastDays.slice(0, i + 1);
         return lastMovements.reduce((suma, movement) => {
           return suma + movement
         }, 0);
@@ -109,26 +82,29 @@ const amounts = computed(()=>{
 
     <template #resume>
       <Resume 
-          label="Ahorro total" 
+          :label="'Ahorro total'" 
           :labeltotal="label"
           :monto= "monto" 
-          montototal= 10000002>
+          :montototal= "totalAmount">
         
         <template #graphic>
           <Graphic
             :amounts="amounts"
+            @select="select"
           />
         </template>
 
         <template #action>
-          <Action/>
+          <Action 
+          @create="create"/>
         </template>
       </Resume>
     </template>
 
     <template #movements>
       <Movements 
-        :movements="movements">
+        :movements="movements"
+        @remove="remove">
       </Movements>
     </template>
 
