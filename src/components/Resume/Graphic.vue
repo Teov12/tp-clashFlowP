@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, toRefs, computed, ref, defineEmits } from 'vue';
+import { defineProps, toRefs, computed, ref } from 'vue';
 
 const props = defineProps({
         amounts: {
@@ -28,7 +28,6 @@ const points = computed(() => {
     return amounts.value.reduce((points, amount, i)=>{
         const x = (300/total) * (i + 1);
         const y = amountToPixels(amount);
-        console.log(y);
         return `${points} ${x}, ${y}`;
     }, "0, 100")
 });
@@ -40,7 +39,6 @@ const zero = computed(()=>{
 const showPointer = ref(false);
 const pointer = ref(0);
 
-const emit = defineEmits(["select"])
 
 const tap = ({target, touches}) => {
     showPointer.value = true;
@@ -48,7 +46,6 @@ const tap = ({target, touches}) => {
     const elementX = target.getBoundingClientRect().x;
     const touchX = touches[0].clientX;
     pointer.value = ((touchX - elementX) * 300) / elementWidth;
-    emit("select", monto)
 };
 
 const untap = () =>{
@@ -90,6 +87,7 @@ const untap = () =>{
             />
         </svg>
         <p>Ultimos 30 dias</p>
+        <div>{{amounts}}</div>
     </div>
 </template>
 
