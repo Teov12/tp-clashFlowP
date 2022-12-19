@@ -1,6 +1,6 @@
 <script setup>
-import { defineAsyncComponent } from "@vue/runtime-core"
-import Splashscreen from "./components/splashscreen.vue";
+import { defineAsyncComponent } from "@vue/runtime-core";
+//import Splashscreen from "../src/components/Splashscreen.vue";
 
 
 const Home= defineAsyncComponent(()=>{
